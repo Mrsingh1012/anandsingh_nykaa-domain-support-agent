@@ -298,13 +298,25 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Run the Complete Master Demonstration
-Execute the end-to-end pipeline covering all 16 tasks in a single command:
+### 2. Launch the Interactive Web Chat UI
+To visually chat with all agents in your browser with real-time multi-agent visual orchestration:
+```bash
+python run_web_app.py
+```
+This automatically starts the FastAPI server and opens **`http://127.0.0.1:8000`** in your default web browser.
+
+### 3. Run the Complete Master Demonstration
+Execute the end-to-end automated pipeline covering all 16 tasks in a single command:
 ```bash
 python run_all_demonstrations.py
 ```
 
-### 3. Run Individual Components
+### 4. Run Automated Test Suite
+```bash
+pytest -v
+```
+
+### 5. Run Individual Components
 - **Part 1 (Dataset & RAG Core):**
   ```bash
   python dataset.py
@@ -316,11 +328,7 @@ python run_all_demonstrations.py
   ```
 - **Part 3 (FastAPI Server, WebSocket & 15-Query Evaluation):**
   ```bash
-  # Launch FastAPI Backend & Interactive Web Chat UI
   python api_server.py
-  # Then open http://127.0.0.1:8000 in your browser to chat live!
-
-  # Run automated 15-query evaluation benchmark
   python evaluation.py
   ```
 - **Part 4 (Autogen Review Stage & AI Governance):**
@@ -333,17 +341,25 @@ python run_all_demonstrations.py
 ## 8. File Structure
 
 ```
-├── dataset.py                # Task 1: Deterministic order dataset generator & verification
-├── knowledge_base.py         # Task 2: 12 author-crafted Nykaa policy documents
-├── rag_core.py               # Tasks 3-5: Dual chunking, ChromaDB, calibration & evaluation
-├── tools.py                  # Task 6: check_order_status tool with escalation formula & RAG tool
-├── mock_llm.py               # BaseLLM extension avoiding ReAct template traps & telemetry
-├── crew_agents.py            # Tasks 7-10: 3 CrewAI agents, LangChain memory, Pydantic schema, guardrails
+├── run_web_app.py            # Interactive Web App launcher (starts server & opens browser)
 ├── api_server.py             # Tasks 11-12: FastAPI REST endpoints, WebSocket chat, ELK JSONL logger
 ├── static/
 │   └── index.html            # Interactive Web Chat UI, multi-agent visualizer & audit console
-├── evaluation.py             # Task 13: 15-query LLM-as-judge evaluation benchmark
+├── crew_agents.py            # Tasks 7-10: 3 CrewAI agents, LangChain memory, Pydantic schema, guardrails
+├── mock_llm.py               # BaseLLM extension avoiding ReAct template traps & telemetry
 ├── governance_review.py      # Tasks 14-16: Autogen review team, AI governance, response cache
+├── tools.py                  # Task 6: check_order_status tool with escalation formula & RAG tool
+├── rag_core.py               # Tasks 3-5: Dual chunking, ChromaDB, calibration & evaluation
+├── knowledge_base.py         # Task 2: 12 author-crafted Nykaa policy documents
+├── dataset.py                # Task 1: Deterministic order dataset generator & verification
+├── evaluation.py             # Task 13: 15-query LLM-as-judge evaluation benchmark
 ├── run_all_demonstrations.py # Master verification script for all 16 tasks
+├── tests/
+│   └── test_capstone.py      # Pytest test suite (11 automated tests)
+├── transcripts/
+│   └── full_demonstration_transcript.txt # Verbatim execution transcript
+├── support_requests.jsonl    # ELK-style audit log with strictly masked PII
+├── requirements.txt          # Pinned project dependencies
+├── .gitignore                # Git ignore patterns
 └── README.md                 # Complete project report, benchmarks, and rubric documentation
 ```
