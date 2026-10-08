@@ -1,6 +1,6 @@
 # Nykaa Domain Support Agent (CrewAI Capstone)
 
-> **GitHub Repository:** [https://github.com/Mrsingh1012/nykaa-domain-support-agent](https://github.com/Mrsingh1012/nykaa-domain-support-agent)  
+> **GitHub Repository:** [https://github.com/Mrsingh1012/anandsingh_nykaa-domain-support-agent](https://github.com/Mrsingh1012/anandsingh_nykaa-domain-support-agent)  
 > **Author / Student:** [Mrsingh1012](https://github.com/Mrsingh1012)  
 > **Track:** E-commerce & Retail (Nykaa)  
 > **Architecture:** Local SentenceTransformers RAG + CrewAI Multi-Agent System + Autogen Review Stage + FastAPI Deployment  
@@ -282,8 +282,8 @@ An in-memory cache keyed by normalized query strings eliminates redundant vector
 
 ### 1. Clone Repository & Setup Virtual Environment
 ```bash
-git clone https://github.com/Mrsingh1012/nykaa-domain-support-agent.git
-cd nykaa-domain-support-agent
+git clone https://github.com/Mrsingh1012/anandsingh_nykaa-domain-support-agent.git
+cd anandsingh_nykaa-domain-support-agent
 
 # Create and activate virtual environment
 python -m venv .venv
