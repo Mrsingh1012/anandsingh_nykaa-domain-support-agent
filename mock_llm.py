@@ -116,7 +116,7 @@ class NykaaMockLLM(BaseLLM):
                 if "query" in schema_keys or "rag" in tool_name.lower() or "policy" in tool_name.lower():
                     # Extract customer policy question
                     query_candidate = "What is the Nykaa return and refund policy?"
-                    q_match = re.search(r"User Query:\s*([^\n\r]+)", full_text, re.IGNORECASE)
+                    q_match = re.search(r"(?:inquiry|User Query|query):\s*['\"]?([^\n\r'\"]+)", full_text, re.IGNORECASE)
                     if q_match:
                         query_candidate = q_match.group(1).strip()
                     elif "return" in full_text.lower():
@@ -144,9 +144,17 @@ class NykaaMockLLM(BaseLLM):
                         return f"Thought: I will provide the verified order status.\nFinal Answer: {obs_data['message']}"
             except Exception:
                 pass
-        user_queries = [t["content"] for t in turns if t.get("role") == "user"]
-        last_user_prompt = user_queries[-1] if user_queries else full_text
-        order_match = re.search(r"NYK-\d{4,}", last_user_prompt, re.IGNORECASE)
+
+        # Extract active inquiry from task description
+        curr_inquiry = ""
+        inq_match = re.search(r"(?:inquiry|query):\s*['\"]?([^\n\r'\"]+)", full_text, re.IGNORECASE)
+        if inq_match:
+            curr_inquiry = inq_match.group(1).strip()
+        else:
+            user_queries = [t["content"] for t in turns if t.get("role") == "user"]
+            curr_inquiry = user_queries[-1] if user_queries else full_text
+
+        order_match = re.search(r"NYK-\d{4,}", curr_inquiry, re.IGNORECASE)
 
         if order_match:
             order_str = order_match.group(0).upper()
@@ -165,11 +173,27 @@ class NykaaMockLLM(BaseLLM):
             )
         else:
             # Policy question synthesis
-            policy_result = rag_policy_lookup(full_text[:120])
-            if policy_result["is_grounded"]:
-                final_text = policy_result["answer"]
+            context_match = re.search(
+                r"(?:This is the context you're working with:\s*|Relevant policy excerpts:\s*|answer[\"']?\s*:\s*[\"'])(.*?)(?:\n\s*Task:|\n\s*This is the expected output:|\"[\s,]*\"sources|$)",
+                full_text,
+                re.DOTALL | re.IGNORECASE
+            )
+            extracted_context = ""
+            if context_match:
+                extracted_context = context_match.group(1).strip().replace('\\"', '"')
+
+            if len(extracted_context) > 25 and not extracted_context.startswith("Hello! Regarding"):
+                final_text = extracted_context
             else:
-                final_text = "I don't know based on the provided Nykaa policy documentation."
+                policy_result = rag_policy_lookup(curr_inquiry[:120])
+                if policy_result["is_grounded"]:
+                    final_text = policy_result["answer"]
+                else:
+                    final_text = "I don't know based on the provided Nykaa policy documentation."
+
+        for prompt_artifact in ["Provide your complete response:", "Provide your complete response", "Give your answer:"]:
+            if prompt_artifact in final_text:
+                final_text = final_text.split(prompt_artifact)[0].strip()
 
         # If a structured response_model was passed
         if response_model:

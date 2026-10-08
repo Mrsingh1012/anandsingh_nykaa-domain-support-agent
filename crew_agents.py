@@ -288,7 +288,7 @@ def run_support_pipeline(
             agent=retrieval_agent,
         )
         task2 = Task(
-            description=f"Compose customer answer strictly grounded in retrieved excerpts.",
+            description=f"Compose customer answer for inquiry: '{sanitized_query}' strictly grounded in retrieved excerpts.",
             expected_output="Final synthesized policy answer",
             agent=composer_agent,
         )
@@ -310,6 +310,9 @@ def run_support_pipeline(
     # Clean Crew output string
     if "Final Answer:" in draft_answer:
         draft_answer = draft_answer.split("Final Answer:")[-1].strip()
+    for prompt_artifact in ["Provide your complete response:", "Provide your complete response", "Give your answer:"]:
+        if prompt_artifact in draft_answer:
+            draft_answer = draft_answer.split(prompt_artifact)[0].strip()
 
     # 5. OUTPUT GUARDRAIL: Groundedness Check
     grounded_ok, ground_msg = verify_groundedness(draft_answer, sources)

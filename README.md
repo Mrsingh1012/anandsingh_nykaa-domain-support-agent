@@ -305,18 +305,28 @@ python run_web_app.py
 ```
 This automatically starts the FastAPI server and opens **`http://127.0.0.1:8000`** in your default web browser.
 
-### 3. Run the Complete Master Demonstration
+### 3. Run the Unified End-to-End Workflow
+To execute the complete 10-stage unified agent workflow (or launch interactive CLI mode):
+```bash
+# Automated 5-stage demonstration
+python complete_workflow.py
+
+# Interactive real-time CLI mode
+python complete_workflow.py --interactive
+```
+
+### 4. Run the Complete Master Demonstration
 Execute the end-to-end automated pipeline covering all 16 tasks in a single command:
 ```bash
 python run_all_demonstrations.py
 ```
 
-### 4. Run Automated Test Suite
+### 5. Run Automated Test Suite
 ```bash
 pytest -v
 ```
 
-### 5. Run Individual Components
+### 6. Run Individual Components
 - **Part 1 (Dataset & RAG Core):**
   ```bash
   python dataset.py
@@ -342,6 +352,7 @@ pytest -v
 
 ```
 ├── run_web_app.py            # Interactive Web App launcher (starts server & opens browser)
+├── complete_workflow.py      # Unified 10-stage end-to-end multi-agent workflow & interactive CLI
 ├── api_server.py             # Tasks 11-12: FastAPI REST endpoints, WebSocket chat, ELK JSONL logger
 ├── static/
 │   └── index.html            # Interactive Web Chat UI, multi-agent visualizer & audit console
