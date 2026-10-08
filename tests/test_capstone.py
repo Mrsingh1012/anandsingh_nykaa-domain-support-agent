@@ -151,6 +151,17 @@ def test_fastapi_endpoints():
     assert add_resp.status_code == 200
     assert add_resp.json()["status"] == "success"
 
+    # 4. Root Interactive Web UI
+    root_resp = client.get("/")
+    assert root_resp.status_code == 200
+    assert "Nykaa" in root_resp.text
+    assert "Domain Support Agent" in root_resp.text
+
+    # 5. ELK-Style Audit Logs Endpoint
+    logs_resp = client.get("/logs")
+    assert logs_resp.status_code == 200
+    assert isinstance(logs_resp.json(), list)
+
 
 # ---------------------------------------------------------------------------
 # Part 4 Tests: Governance & Caching

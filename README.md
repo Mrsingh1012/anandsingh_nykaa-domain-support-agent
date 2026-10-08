@@ -316,7 +316,11 @@ python run_all_demonstrations.py
   ```
 - **Part 3 (FastAPI Server, WebSocket & 15-Query Evaluation):**
   ```bash
+  # Launch FastAPI Backend & Interactive Web Chat UI
   python api_server.py
+  # Then open http://127.0.0.1:8000 in your browser to chat live!
+
+  # Run automated 15-query evaluation benchmark
   python evaluation.py
   ```
 - **Part 4 (Autogen Review Stage & AI Governance):**
@@ -336,6 +340,8 @@ python run_all_demonstrations.py
 ├── mock_llm.py               # BaseLLM extension avoiding ReAct template traps & telemetry
 ├── crew_agents.py            # Tasks 7-10: 3 CrewAI agents, LangChain memory, Pydantic schema, guardrails
 ├── api_server.py             # Tasks 11-12: FastAPI REST endpoints, WebSocket chat, ELK JSONL logger
+├── static/
+│   └── index.html            # Interactive Web Chat UI, multi-agent visualizer & audit console
 ├── evaluation.py             # Task 13: 15-query LLM-as-judge evaluation benchmark
 ├── governance_review.py      # Tasks 14-16: Autogen review team, AI governance, response cache
 ├── run_all_demonstrations.py # Master verification script for all 16 tasks

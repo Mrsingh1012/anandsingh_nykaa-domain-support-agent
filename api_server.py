@@ -27,7 +27,7 @@ os.environ["OTEL_SDK_DISABLED"] = "true"
 os.environ["PYTHONIOENCODING"] = "utf-8"
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 
 from crew_agents import run_support_pipeline, NykaaSupportResponse, mask_pii
 from tools import get_shared_vector_store
@@ -110,6 +110,34 @@ app = FastAPI(
     description="Production-grade AI customer support backend orchestrating RAG, CrewAI, and Autogen Review.",
     version="1.0.0",
 )
+
+
+STATIC_INDEX_PATH = os.path.join(os.path.dirname(__file__), "static", "index.html")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def root_ui():
+    """Serves the interactive Nykaa Support Agent Web UI."""
+    if os.path.exists(STATIC_INDEX_PATH):
+        return FileResponse(STATIC_INDEX_PATH)
+    return HTMLResponse("<h1>Nykaa Domain Support Agent API</h1><p>API is running. Visit /docs for OpenAPI specs.</p>")
+
+
+@app.get("/logs")
+async def get_recent_logs(limit: int = 25):
+    """Fetches the most recent ELK-style audit log entries from support_requests.jsonl."""
+    entries = []
+    if os.path.exists(LOG_FILE_PATH):
+        try:
+            with open(LOG_FILE_PATH, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+                for line in reversed(lines[-limit:]):
+                    line_str = line.strip()
+                    if line_str:
+                        entries.append(json.loads(line_str))
+        except Exception as e:
+            print(f"Error reading logs: {e}", file=sys.stderr)
+    return entries
 
 
 @app.get("/health")
